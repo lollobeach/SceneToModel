@@ -1,0 +1,180 @@
+{
+   "person": [
+      {
+         "Single person": {
+            "specs": {},
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         },
+         "Group of people": {
+            "specs": {
+               "Number": {
+                  "type": "Integer",
+                  "description": "Number of people composing the group"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         }
+      }
+   ],
+   "thermometer": [
+      {
+         "Celsius": {
+            "specs": {
+               "Max": {
+                  "type": "Integer",
+                  "description": "Maximum degrees measurable"
+               },
+               "Min": {
+                  "type": "String",
+                  "description": "Minimum degrees measurable"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         },
+         "Farhenheit": {
+            "specs": {
+               "Max": {
+                  "type": "Integer",
+                  "description": "Maximum degrees measurable"
+               },
+               "Min": {
+                  "type": "String",
+                  "description": "Minimum degrees measurable"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         },
+         "Kelvin": {
+            "specs": {
+               "Max": {
+                  "type": "Integer",
+                  "description": "Maximum degrees measurable"
+               },
+               "Min": {
+                  "type": "Integer",
+                  "description": "Minimum degrees measurable"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         }
+      }
+   ],
+   "photocell": [
+      {
+         "Light": {
+            "specs": {
+               "Max": {
+                  "type": "Integer",
+                  "description": "Maximum lumen measurable"
+               },
+               "Min": {
+                  "type": "Integer",
+                  "description": "Minimum lumen measurable"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         },
+         "Distance": {
+            "specs": {
+               "Max": {
+                  "type": "Integer",
+                  "description": "Maximum meters reachable"
+               },
+               "Min": {
+                  "type": "Integer",
+                  "description": "Minimum degrees reachable"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         }
+      }
+   ],
+   "gateway": [
+      {
+         "Standard gateway": {
+            "specs": {
+               "Ports": {
+                  "type": "Integer",
+                  "description": "Number of network cards"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         }
+      }
+   ],
+   "airQuality": [
+      {
+         "CO2": {
+            "specs": {
+               "Place": {
+                  "type": "String",
+                  "description": "Where the device is placed"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         },
+         "Gas": {
+            "specs": {
+               "Gas": {
+                  "type": "String",
+                  "description": "Type of gas (ex: methane) detectable"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         },
+         "Wind": {
+            "specs": {
+               "Wind": {
+                  "type": "Integer",
+                  "description": "Maximum velocity of the wind detectable"
+               }
+            },
+            "output": [
+               "Http",
+               "MQTT",
+               "Other"
+            ]
+         }
+      }
+   ]
+}
