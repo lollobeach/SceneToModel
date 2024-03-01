@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-
+   
 const app = express();
 const port = 3000;
 
@@ -13,15 +13,32 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage });
+const uploadMiddleware = multer({ storage }).single('image');
 
 app.get('/', (req, res) => {
     res.send('Server Locale Funzionante!');
 });
 
-app.post('/upload', upload.single('image'), (req, res) => {
-    // Gestisci l'upload dell'immagine e invia una risposta appropriata
-    res.send('Immagine ricevuta con successo!');
+app.post('/upload', (req, res) => {
+    // Utilizza il middleware di upload per gestire l'upload dell'immagine
+    uploadMiddleware(req, res, function(err) {
+        if (err) {
+            return res.status(500).send('Errore durante l\'upload dell\'immagine');
+        }
+
+        // Controlla se req.file è definito prima di accedere a req.file.filename
+        if (req.file) {
+            const imageName = req.file.filename;
+            const imagePath = `/images/${imageName}`;
+            
+            // Puoi fare ulteriori operazioni qui, ad esempio salvare il percorso dell'immagine in un database
+
+            // Invia una risposta con il percorso dell'immagine caricata
+            res.send(`Immagine ricevuta con successo! Visualizzala qui: <a href="${imagePath}">Visualizza Immagine</a>`);
+        } else {
+            res.status(400).send('Nessun file ricevuto');
+        }
+    });
 });
 
 app.get('/images/:imageName', (req, res) => {

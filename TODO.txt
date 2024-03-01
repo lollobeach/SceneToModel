@@ -1,0 +1,6 @@
+1) risolvere problema HTTPREQUEST e PIXEL con il supporto degli admin adoxx (speriamo)
+
+2) TROVARE L'equivalente di questa cosa con ADOxx
+
+curl --location 'http://localhost:3000/upload' \
+--form 'image=@"/C:/Users/39389/Documents/GitHub/TBDM-VGLS-2023/ImmagineProva.jpg"'
