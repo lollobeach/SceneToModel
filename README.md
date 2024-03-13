@@ -9,7 +9,7 @@ This project includes the features implemented following the [Background Image M
 Ensure to have pip, requests, and python installed.
 
 > [!NOTE]
-> To make the *Scene_Recognition* button works, please include the *send_image.py* script into the BOC folder (ADOxx installation folder, typicially is something like C:\Program Files\BOC\ADOxx_1.8.0
+> To make the *Scene_Recognition* button works, please include the *send_image.py* script into the BOC folder (ADOxx installation folder, typicially is something like C:\Program Files\BOC\ADOxx_1.8.0)
 
 ## Object detection - Reading .json file containing image with objects detected by the algorithm
 This button exectues the *Object_detection.asc* script: if no empty model is selected, this creates a new empty model and insert objects following the content of the .json file that is uploaded.
