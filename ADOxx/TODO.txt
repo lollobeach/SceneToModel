@@ -1,0 +1,3 @@
+Risolvere pixel:
+
+- script python che mi ritorna (in qualche modo) width e height di un'immagine;s
