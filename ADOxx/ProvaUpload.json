@@ -1,0 +1,44 @@
+{
+   "objects":[
+      {
+         "objectType":"person",
+         "capability1":"ToDefine",
+         "capability2":"",
+         "Nspecification":"",
+         "Xposition":"1",
+         "Yposition":"2"
+      },
+      {
+         "objectType":"gateway",
+         "capability1":"",
+         "capability2":"BetterEmptyThanUndefined",
+         "Nspecification":"",
+         "Xposition":"3",
+         "Yposition":"2"
+      },
+      {
+         "objectType":"thermometer",
+         "capability1":"BothFilled",
+         "capability2":"BothFilled",
+         "Nspecification":"BothFilled",
+         "Xposition":"5",
+         "Yposition":"2"
+      },
+      {
+         "objectType":"photocell",
+         "capability1":"",
+         "capability2":"",
+         "Nspecification":"",
+         "Xposition":"7 ",
+         "Yposition":"2"
+      },
+      {
+         "objectType":"airQuality",
+         "capability1":"",
+         "capability2":"",
+         "Nspecification":"",
+         "Xposition":"9 ",
+         "Yposition":"2"
+      }
+   ]
+}
