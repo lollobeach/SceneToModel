@@ -17,11 +17,12 @@ The prediction to send consist of a JSON file with:
 -----
 
 ## Model Training
-[Google Colab](https://colab.google/) was used to train the model, starting from the notebook provides by the documentation of the **Detectron2** it was enough to change some parameters for this use case, like the number of classes to predict and the number of iterations to execute for the training phase.
+[Google Colab](https://colab.google/) was used to train the model. Starting from the documentation of **Detectron2**, some parameters were changed for this use case, like the number of classes to predict and the number of iterations to execute for the training phase.
+`OBJ_detectron2.ipynb` provides the Python notebook with the configured model for the training and validation phase.
 
-The greatest effort was made in the creation of the dataset since that custom icons was used to depict the IoT devices. For this purpose [Roboflow](https://roboflow.com/) was useful as it provides an user friendly interface to manage the labeling of the images by facilitating also the teamwork. In adding, Roboflow allows to save the dataset in the format supported by this model, **COCO**, and to keep the old versions of the dataset.
+The greatest effort was made in the creation of the dataset since that custom icons were used to depict the IoT devices. For this purpose [Roboflow](https://roboflow.com/) was useful, as it provides an user friendly interface to manage the labeling of the images by facilitating also teamwork. In addition, Roboflow allows to save the dataset in the format supported by this model, **COCO**, and to keep the old versions of the dataset.
 
-Devices recognized now:
+Devices recognized:
 - **Gateway**
 - **Movement**
 - **Temperature**
