@@ -76,7 +76,7 @@ In order to execute the project follow the steps below:
 - clone the repo and enter in the folder created:
   - via HTTPS
     ```
-    git clone [https://github.com/lollobeach/SceneToModel](https://github.com/PROSLab/TBDM-VGLS-2023.git)
+    git clone https://github.com/PROSLab/TBDM-VGLS-2023.git
     cd ./TBDM-VGLS-2023/ObjectDetection
     ```
   - via SSH
