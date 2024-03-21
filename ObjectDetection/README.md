@@ -74,13 +74,13 @@ In order to execute the project follow the steps below:
 - clone the repo and enter in the folder created:
   - via HTTPS
     ```
-    git clone https://github.com/lollobeach/SceneToModel
-    cd ./ObjectDetection
+    git clone [https://github.com/lollobeach/SceneToModel](https://github.com/PROSLab/TBDM-VGLS-2023.git)
+    cd ./TBDM-VGLS-2023/ObjectDetection
     ```
   - via SSH
     ```
-    git clone git@github.com:lollobeach/SceneToModel.git
-    cd ./ObjectDetection
+    git clone git@github.com:PROSLab/TBDM-VGLS-2023.git
+    cd ./TBDM-VGLS-2023/ObjectDetection
     ```
 - create the virtual environment and execute it:
   ```
@@ -95,7 +95,7 @@ In order to execute the project follow the steps below:
 The first file, _requirements.txt_, contains all libraries used for the backend and the model, while the second file, _git_requirements.txt_, contains the github repository of the Detectron2 model.
 
 ### Configuration
-In adding to the installation you have to add an `.env` file in `./SceneToModel/fastapi_server/` with the following parameters:
+In adding to the installation you have to add an `.env` file in `./TBDM-VGLS-2023/ObjectDetection/fastapi_server/` with the following parameters:
 ```
 CONNECTION_STRING=mongodb+srv://<user>:<password>@cluster0.ictsbaw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 DATABASE_NAME=<database_name>
@@ -142,7 +142,7 @@ In `./testimages` you can find some picture to use for doing some test.
 > [!NOTE]
 > the _key_ of the form data must be **image** according to the API written in the `main.py` file.
 
-In adding to the JSON response of the predicition you can also see the image with bounding boxes predicted using a browser and going to the url */get-image/uuid_image* where `uuid_image` is the filename (without the extension) of the picture saved in `./ObjectDetection/fastapi_server/predictions/`.
+In adding to the JSON response of the predicition you can also see the image with bounding boxes predicted using a browser and going to the url */get-image/uuid_image* where `uuid_image` is the filename (without the extension) of the picture saved in `./TBDM-VGLS-2023/ObjectDetection/fastapi_server/predictions/`.
 
 For example:
 
