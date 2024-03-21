@@ -16,6 +16,20 @@ The prediction to send consist of a JSON file with:
 
 -----
 
+## Model Training
+[Google Colab](https://colab.google/) was used to train the model, starting from the notebook provides by the documentation of the **Detectron2** it was enough to change some parameters for this use case, like the number of classes to predict and the number of iterations to execute for the training phase.
+
+The greatest effort was made in the creation of the dataset since that custom icons was used to depict the IoT devices. For this purpose [Roboflow](https://roboflow.com/) was useful as it provides an user friendly interface to manage the labeling of the images by facilitating also the teamwork. In adding, Roboflow allows to save the dataset in the format supported by this model, **COCO**, and to keep the old versions of the dataset.
+
+Devices recognized now:
+- **Gateway**
+- **Movement**
+- **Temperature**
+
+> The dataset used is available in `./fastapi_server/obj_detection_model/big_data.v20i.coco/`
+
+-----
+
 ## Architecture
 ![architecture](https://i.postimg.cc/qqf59sS2/architecture.png)
 
@@ -43,11 +57,20 @@ COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml
 - Linux, macOS or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install);
 - [Python3](https://www.python.org/downloads/) >= 3.7;
 - [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx);
+- [CUDA](https://developer.nvidia.com/cuda-downloads);
 - Database in [MongoDB Atlas](https://www.mongodb.com/atlas).
 
 In order to execute the project follow the steps below:
 
 ### Installation
+
+- _with WSL may be useful to execute_:
+  ```
+  sudo apt-get isntall gcc
+  sudo apt-get install g++
+  sudo apt-get install python3-dev
+  sudo apt-get install libgl1-mesa-dev
+  ```
 - clone the repo and enter in the folder created:
   - via HTTPS
     ```
@@ -98,7 +121,11 @@ NUM_CLASSES=16
 SCORE_THRESH_TEST=0.7
 MODEL_WEIGHTS=./obj_detection_model/model_final.pth
 ```
-refer to the parameters for the model's configuration.
+refer to the parameters for the model's configuration, where:
+- **DATASET_PATH** corresponds to the path of the dataset
+- **NUM_CLASSES** corresponds to the number of categories to recognise (3 for the IoT devices, 12 for the end and start arrows, 1 is a category created by Roboflow not used by the model)
+- **SCORE_THRESH_TEST** corresponds to the threshold for which if the prediction accuracy does not exceed it then the model does not return the bounding box
+- **MODEL_WEIGHTS** corresponds to the path of the file with the weights of the last training
 
 -----
 
@@ -108,13 +135,14 @@ cd ./fastapi_server
 python3 main.py
 ```
 
-At this point you can use clients like [Postman](https://www.postman.com/) to send the image to predict via HTTP POST request at the local endpoint *http://127.0.0.1:8000/uploadfile* like in the image below:
+At this point you can use a client like [Postman](https://www.postman.com/) to send the image to predict via HTTP POST request at the local endpoint */uploadfile* like in the image below:
 ![postman image](https://i.postimg.cc/m2MCn6nk/postman.png)
+In `./testimages` you can find some picture to use for doing some test.
 
 > [!NOTE]
 > the _key_ of the form data must be **image** according to the API written in the `main.py` file.
 
-In adding to the JSON response of the predicition you can also see the image with bounding boxes predicted using a browser and going to the url *http://127.0.0.1:8000/get-image/uuid_image* where `uuid_image` is the filename (without the extension) of the picture saved in `./SceneToModel/fastapi_server/predictions/`.
+In adding to the JSON response of the predicition you can also see the image with bounding boxes predicted using a browser and going to the url */get-image/uuid_image* where `uuid_image` is the filename (without the extension) of the picture saved in `./SceneToModel/fastapi_server/predictions/`.
 
 For example:
 
