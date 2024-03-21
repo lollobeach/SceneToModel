@@ -41,7 +41,7 @@ Devices recognized:
 [FastAPI](https://fastapi.tiangolo.com/) is a Python framework to quickly develop APIs and it is in charge of to keep the communication among the other components: it receives the image from ADOxx to send to the Object Detection Model and the result is saved in a JSON file that can be stored in a MongoDB istance or also in the filesystem. With the JSON file the Model returns also the image with the bounding boxes predicted, also the latter can be stored in the filesystem and it is accessible via API.
 
 ### Detectron2
-[Detectron2](https://ai.meta.com/tools/detectron2/) is a platform for object detection and segmentation developed by _Facebook AI Research_ and it is based on [PyTorch](https://pytorch.org/). The platform provides several configuraition files to choose a pre-trained model to start with.
+[Detectron2](https://ai.meta.com/tools/detectron2/) is a platform for object detection and segmentation developed by _Facebook AI Research_ and it is based on [PyTorch](https://pytorch.org/). The platform provides several configuration files to choose a pre-trained model to start with.
 In this case this configuration file was enough:
 ```
 COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml
