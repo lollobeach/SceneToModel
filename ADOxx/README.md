@@ -6,7 +6,7 @@ This project includes the features implemented following the [Background Image M
 
 ## Requirements
 
-Ensure to have pip, requests, and python installed.
+Ensure to have pip, pillow, requests, and python installed.
 
 > [!NOTE]
 > To make the *Scene_Recognition* button works, please include the *send_image.py* script into the BOC folder (ADOxx installation folder, typicially is something like C:\Program Files\BOC\ADOxx_1.8.0)
