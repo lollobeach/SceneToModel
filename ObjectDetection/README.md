@@ -1,4 +1,4 @@
-# Scene To Model
+# Object Detection
 
 ## Objective
 The project in question uses an Object Detection Model to predict the IoT icons, in an image, used to depict an IoT scenario designed by the user. The prediction is then sent to an ADOxx server that realises the digital copy of the scenario, facilitating the prototyping and the management of complex IoT scenario.
@@ -75,12 +75,12 @@ In order to execute the project follow the steps below:
   - via HTTPS
     ```
     git clone https://github.com/lollobeach/SceneToModel
-    cd ./SceneToModel
+    cd ./ObjectDetection
     ```
   - via SSH
     ```
     git clone git@github.com:lollobeach/SceneToModel.git
-    cd ./SceneToModel
+    cd ./ObjectDetection
     ```
 - create the virtual environment and execute it:
   ```
@@ -142,7 +142,7 @@ In `./testimages` you can find some picture to use for doing some test.
 > [!NOTE]
 > the _key_ of the form data must be **image** according to the API written in the `main.py` file.
 
-In adding to the JSON response of the predicition you can also see the image with bounding boxes predicted using a browser and going to the url */get-image/uuid_image* where `uuid_image` is the filename (without the extension) of the picture saved in `./SceneToModel/fastapi_server/predictions/`.
+In adding to the JSON response of the predicition you can also see the image with bounding boxes predicted using a browser and going to the url */get-image/uuid_image* where `uuid_image` is the filename (without the extension) of the picture saved in `./ObjectDetection/fastapi_server/predictions/`.
 
 For example:
 
