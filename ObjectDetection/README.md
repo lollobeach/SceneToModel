@@ -70,6 +70,8 @@ In order to execute the project follow the steps below:
   sudo apt-get install g++
   sudo apt-get install python3-dev
   sudo apt-get install libgl1-mesa-dev
+  sudo apt-get install git-lfs
+  git lfs install
   ```
 - clone the repo and enter in the folder created:
   - via HTTPS
