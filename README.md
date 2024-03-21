@@ -1,8 +1,25 @@
 # Scene To Model
 
+## Objective
+The project in question uses an Object Detection Model to predict the IoT icons used to depict an IoT scenario designed by the user. The prediction is then sent to an ADOxx server that realises the digital copy of the scenario, facilitating the prototyping and the management of complex IoT scenario.
+
+The prediction to send consist of a JSON file with:
+- an object's array like this:
+
+  ![object_predicted](https://i.postimg.cc/WzZswync/object-predicted.png)
+
+  Where you can find the type of the IoT device with all related arrows (useful for finding the link among the IoT devices) connected and the coordinates of the bounding box which circumscribes the icon.
+
+- the `uuid` and `timestamp` of the image predicted:
+  
+  ![uuid & timestamp](https://i.postimg.cc/50RwCXPk/uuid-timestamp-json.png)
+
+
+
 ## Requirements
 - Linux, macOS or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install);
 - [Python3](https://www.python.org/downloads/) >= 3.7;
+- [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx);
 - Database in [MongoDB Atlas](https://www.mongodb.com/atlas).
 
 In order to execute the project follow the steps below:
@@ -27,7 +44,7 @@ In order to execute the project follow the steps below:
 - install the requirements **(follow the order in the snippet)**:
   ```
   pip install -r requirements.txt
-  pip install -r git_requirements.txt
+  pip install -r git_requirement.txt
   ```
 The first file, _requirements.txt_, contains all libraries used for the backend and the model, while the second file, _git_requirements.txt_, contains the github repository of the Detectron2 model.
 
