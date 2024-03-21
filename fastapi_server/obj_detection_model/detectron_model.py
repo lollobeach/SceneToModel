@@ -18,8 +18,8 @@ import time
 dotenv.load_dotenv()
 
 mongo_client = MongoClient(os.getenv("CONNECTION_STRING"))
-database = mongo_client["SceneToModel"]
-collection = database["predictions"]
+database = mongo_client[os.getenv("DATABASE_NAME")]
+collection = database[os.getenv("COLLECTION_NAME")]
 
 
 def dataset_registration():
