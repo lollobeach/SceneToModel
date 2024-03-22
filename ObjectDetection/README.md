@@ -67,7 +67,7 @@ In order to execute the project follow the steps below:
 
 - _with WSL may be useful to execute_:
   ```
-  sudo apt-get isntall gcc
+  sudo apt-get install gcc
   sudo apt-get install g++
   sudo apt-get install python3-dev
   sudo apt-get install libgl1-mesa-dev
