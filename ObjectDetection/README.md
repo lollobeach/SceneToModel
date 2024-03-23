@@ -16,9 +16,127 @@ The prediction to send consist of a JSON file with:
 
 -----
 
-## Model Training
+## Training and Validation
 [Google Colab](https://colab.google/) was used to train the model. Starting from the documentation of **Detectron2**, some parameters were changed for this use case, like the number of classes to predict and the number of iterations to execute for the training phase.
+
 `OBJ_detectron2.ipynb` provides the Python notebook with the configured model for the training and validation phase.
+
+### How to configure the training and the validation
+
+1. Register the datasets:
+    ```
+    root_path = "/content/drive/MyDrive/BigData_Project/big_data.v20i.coco/"
+    register_coco_instances("coco_training", {}, root_path + "train/_annotations.coco.json", root_path + "train/")
+    register_coco_instances("coco_validation", {}, root_path + "valid/_annotations.coco.json", root_path + "valid/")
+    register_coco_instances("coco_test", {}, root_path + "test/_annotations.coco.json", root_path + "test/")
+    ```
+
+2. Check the correctness of labeling:
+   ```
+   training_metadata = MetadataCatalog.get("coco_training")
+   training_dicts = DatasetCatalog.get("coco_training")
+   for d in random.sample(training_dicts, 3):
+       img = cv2.imread(d["file_name"])
+       visualizer = Visualizer(img[:, :, ::-1], metadata=training_metadata, scale=1)
+       out = visualizer.draw_dataset_dict(d)
+       cv2_imshow(out.get_image()[:, :, ::-1])
+   ```
+
+3. Set the parameters:
+    ```
+    cfg = get_cfg()
+    cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
+    cfg.DATASETS.TRAIN = ("coco_training",)
+    cfg.DATASETS.TEST = ("coco_validation",) # dataset for validation phase
+    cfg.MODEL.WEIGHTS = "/content/drive/MyDrive/BigData_Project/output/model_final.pth" # weights of the last training
+    # cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml")  # Let training initialize from model zoo
+    cfg.SOLVER.IMS_PER_BATCH = 5  # This is the real "batch size" commonly known to deep learning people
+    cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
+    cfg.SOLVER.MAX_ITER = 4000 # iterations number for the training
+    cfg.SOLVER.STEPS = [] # do not decay learning rate
+    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 5 # used to sample a subset of proposals coming out of RPN to calculate cls and reg loss during training
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 16 # number of classes to recognize +1 since that with Roboflow we get the "super category" (the latter does not affect the training)
+    cfg.SOLVER.CHECKPOINT_PERIOD = 1000 # after how many iterations a checkpoint of the training is saved
+    cfg.TEST.EVAL_PERIOD = 500 # after how many iterations an evaluation phase is applied
+    # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+    os.makedirs("/content/drive/MyDrive/BigData_Project/output", exist_ok=True)
+    cfg.OUTPUT_DIR = "/content/drive/MyDrive/BigData_Project/output/"
+    trainer = Trainer(cfg) # custom Trainer with the validation phase implemented
+    trainer.resume_or_load(resume=False) # if the last training was interrupted before its ending set "resume" to True for restarting from the last checkpoint
+    trainer.train()
+    ```
+  
+    In this case the only parameters changed were:
+    - `cfg.DATASETS.TRAIN` -> is a tuple with the names of the registered datasets for the training;
+    - `cfg.DATSETS.TEST` -> is a tuple with the names of the registered datasets for the validation;
+    - `cfg.MODEL.WEIGHTS` -> is the path with the last `.pth` file containing the weights of the last training;
+    - `cfg.SOLVER.MAX_ITER` -> is the number of iterations to apply for the training (_epochs_ = (MAX_ITER * IMS_PER_BATCH) / _sizeTrainingDataset_);
+    - `cfg.MODEL.ROI_HEADS.NUM_CLASSES` -> is the number of classes to predict + 1 (Roboflow generates a "super category" not useful for the training);
+    - `cfg.SOLVER.CHECKPOINT_PERIOD` -> after how many iterations a checkpoint of the training is saved;
+    - `cfg.TEST.EVAL_PERIOD` -> after how many iterations an evaluation phase is applied (it returns the AP for each category to predict);
+    - `cfg.OUTPUT_DIR` -> where the model saves the file with the final weights of the training;
+   <br>
+   
+   > For other configurations follow this [link](https://detectron2.readthedocs.io/en/latest/modules/config.html)
+
+    In adding:
+    - `trainer = Trainer(cfg)` is used to develop the validation phase, where `Trainer(cfg)` is a custom trainer:
+        ```
+        from detectron2.data import build_detection_test_loader
+        from detectron2.evaluation import COCOEvaluator, inference_on_dataset
+        from detectron2.engine import DefaultTrainer
+        
+        class Trainer(DefaultTrainer):
+        
+          @classmethod
+          def build_evaluator(cls, cfg, dataset_name):
+            os.makedirs("/content/drive/MyDrive/BigData_Project/inference", exist_ok=True)
+            return COCOEvaluator(dataset_name, cfg, False, "/content/drive/MyDrive/BigData_Project/inference")
+        
+          def do_train(self):
+            super().do_train()
+            val_loader = build_detection_test_loader(self.cfg, self.cfg.DATASETS.TEST[0])
+            evaluator = self.build_evaluator(self.cfg, self.cfg.DATASETS.TEST[0])
+            inference_on_dataset(self.model, val_loader, evaluator)
+        ```
+    - `trainer.resume_or_load(resume=False)` if setted to `True` allows us to restart the training from the last checkpoint if it was interrupted
+
+4. Test the inference setting the `predictor`
+     ```
+     from detectron2.checkpoint import DetectionCheckpointer
+     from detectron2.modeling import build_model
+    
+     cfg = get_cfg()
+     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
+     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 16 # number of classes to recognize +1 since that with Roboflow we get the "super category" (the latter does not affect the
+     training)
+     cfg.MODEL.WEIGHTS = "/content/drive/MyDrive/BigData_Project/output/model_final.pth"  # path to the model we just trained
+     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7   # set a custom testing threshold
+     predictor = DefaultPredictor(cfg)
+     ```
+     and visualizing the bounding boxes predicted
+     ```
+     from detectron2.utils.visualizer import ColorMode
+
+     validation_metadata = MetadataCatalog.get("coco_validation")
+    
+     for d in os.listdir(root_path + "/test"):
+       if ".json" not in d:
+         im = cv2.imread(root_path + "/test/" + d)
+         outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+         v = Visualizer(im[:, :, ::-1],
+                         metadata=validation_metadata,
+                         scale=0.5,
+                         instance_mode=ColorMode.IMAGE   # remove the colors of unsegmented pixels. This option is only available for segmentation models
+         )
+         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+         cv2_imshow(out.get_image()[:, :, ::-1])
+     ```
+
+5. At the end we will get a `model_final.pth` which can be used to apply the inference for the next images passed to the model.
+
+   
+### Dataset
 
 The greatest effort was made in the creation of the dataset since that custom icons were used to depict the IoT devices. For this purpose [Roboflow](https://roboflow.com/) was useful, as it provides an user friendly interface to manage the labeling of the images by facilitating also teamwork. In addition, Roboflow allows to save the dataset in the format supported by this model, **COCO**, and to keep the old versions of the dataset.
 
