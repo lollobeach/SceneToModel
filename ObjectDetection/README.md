@@ -19,6 +19,23 @@ The prediction to send consist of a JSON file with:
 ## Training and Validation
 [Google Colab](https://colab.google/) was used to train the model. Starting from the documentation of **Detectron2**, some parameters were changed for this use case, like the number of classes to predict and the number of iterations to execute for the training phase.
 
+Icons recognized:
+- **Gateway**
+- **Movement**
+- **Temperature**
+- **Arrow start 01**
+- **Arrow start 02**
+- **Arrow start 03**
+- **Arrow start 04**
+- **Arrow start 05**
+- **Arrow start 06**
+- **Arrow end 01**
+- **Arrow end 02**
+- **Arrow end 03**
+- **Arrow end 04**
+- **Arrow end 05**
+- **Arrow end 06**
+
 `OBJ_detectron2.ipynb` provides the Python notebook with the configured model for the training and validation phase.
 
 ### How to configure the training and the validation
@@ -79,7 +96,7 @@ The prediction to send consist of a JSON file with:
    
    > For other configurations follow this [link](https://detectron2.readthedocs.io/en/latest/modules/config.html)
 
-    In adding:
+    In addition:
     - `trainer = Trainer(cfg)` is used to develop the validation phase, where `Trainer(cfg)` is a custom trainer:
         ```
         from detectron2.data import build_detection_test_loader
@@ -140,12 +157,47 @@ The prediction to send consist of a JSON file with:
 
 The greatest effort was made in the creation of the dataset since that custom icons were used to depict the IoT devices. For this purpose [Roboflow](https://roboflow.com/) was useful, as it provides an user friendly interface to manage the labeling of the images by facilitating also teamwork. In addition, Roboflow allows to save the dataset in the format supported by this model, **COCO**, and to keep the old versions of the dataset.
 
-Devices recognized:
-- **Gateway**
-- **Movement**
-- **Temperature**
+The dataset used is available in `./fastapi_server/obj_detection_model/big_data.v20i.coco/` and it consists of:
+- 1034 images (with augmentation applied) divided in:
+  
+| Training Set | Validation Set | Test Set |
+| :---:        | :---:          | :---:    |  
+| 951          | 44             | 39       |
 
-> The dataset used is available in `./fastapi_server/obj_detection_model/big_data.v20i.coco/`
+- changes applied:
+
+| Preprocessing         | Augmentation                             |
+| -----                 | -----                                    |  
+| Auto Orient           | Filp: Horizontal Vertical                |
+| Stretch to 640x640    | Shear: ±10° Horizontal, ±10° Vertical    |
+
+> When the _Augmentation_ is applied Roboflow allows to increment the number of images in the training set.
+> 
+> The original dataset contains **317** images in the training set.
+
+- labels:
+  - Arrowheads:
+    
+    |            | arrow_end_01 | arrow_end_02 | arrow_end_03 | arrow_end_04 | arrow_end_05 | arrow_end_06 |
+    | -----      | :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
+    | Training   | 453          | 486          | 447          | 462          | 489          | 486          |
+    | Validation | 19           | 6            | 6            | 2            | 1            | 10           |
+
+  - Arrow start:
+    
+    |            | arrow_start_01 | arrow_start_02 | arrow_start_03 | arrow_start_04 | arrow_start_05 | arrow_start_06 |
+    | -----      | :---:          | :---:          | :---:          | :---:          | :---:          | :---:          |
+    | Training   | 453            | 459            | 483            | 465            | 474            | 459            |
+    | Validation | 16             | 5              | 9              | 4              | 3              | 6              |
+
+  - Devices:
+ 
+    |            | Gateway  | Temperature | Movement |
+    | ----       | :---:    | :---:       | :---:    |
+    | Training   | 774      | 789         | 777      | 
+    | Validation | 57       | 59          | 60       |
+
+  > As that the number of images in the training set is tripled by the augmentation with respect to the original dataset of 317 images, also the number of labels is greater than the number of labels in the original dataset.
 
 -----
 
@@ -217,7 +269,7 @@ In order to execute the project follow the steps below:
 The first file, _requirements.txt_, contains all libraries used for the backend and the model, while the second file, _git_requirements.txt_, contains the github repository of the Detectron2 model.
 
 ### Configuration
-In adding to the installation you have to add an `.env` file in `./TBDM-VGLS-2023/ObjectDetection/fastapi_server/` with the following parameters:
+In addition to the installation you have to add an `.env` file in `./TBDM-VGLS-2023/ObjectDetection/fastapi_server/` with the following parameters:
 ```
 CONNECTION_STRING=mongodb+srv://<user>:<password>@cluster0.ictsbaw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 DATABASE_NAME=<database_name>
@@ -264,7 +316,7 @@ In `./testimages` you can find some picture to use for doing some test.
 > [!NOTE]
 > the _key_ of the form data must be **image** according to the API written in the `main.py` file.
 
-In adding to the JSON response of the predicition you can also see the image with bounding boxes predicted using a browser and going to the url */get-image/uuid_image* where `uuid_image` is the filename (without the extension) of the picture saved in `./TBDM-VGLS-2023/ObjectDetection/fastapi_server/predictions/`.
+In addition to the JSON response of the predicition you can also see the image with bounding boxes predicted using a browser and going to the url */get-image/uuid_image* where `uuid_image` is the filename (without the extension) of the picture saved in `./TBDM-VGLS-2023/ObjectDetection/fastapi_server/predictions/`.
 
 For example:
 
