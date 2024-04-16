@@ -22,17 +22,31 @@ database = mongo_client[os.getenv("DATABASE_NAME")]
 collection = database[os.getenv("COLLECTION_NAME")]
 
 
+def get_annotations():
+    with open("./obj_detection_model/_annotations.coco.json", "r") as f:
+        return json.load(f)
+
+
 def dataset_registration():
+
+    categories = map(lambda x: x["name"], get_annotations()["categories"])
+
     if "coco_training" in DatasetCatalog.list():
         DatasetCatalog.remove("coco_training")
+    if "coco_validation" in DatasetCatalog.list():
+        DatasetCatalog.remove("coco_validation")
 
     root_path = os.getenv("DATASET_PATH")
     register_coco_instances("coco_training", {}, root_path +
                             "train/_annotations.coco.json", root_path + "train/")
+    register_coco_instances("coco_validation", {}, root_path +
+                            "train/_annotations.coco.json", root_path + "valid/")
 
-    training_metadata = MetadataCatalog.get("coco_training")
+    MetadataCatalog.get("coco_validation").set(thing_classes=list(categories))
+    validation_metadata = MetadataCatalog.get("coco_validation")
+    # training_metadata = MetadataCatalog.get("coco_training")
 
-    return training_metadata
+    return validation_metadata
 
 
 def euclidean_distance(point1, point2):
@@ -101,25 +115,24 @@ def json_writing(bounding_boxes, pred_classes, uuid):
         "predictions": []
     }
 
-    with open("./obj_detection_model/_annotations.coco.json", "r") as f:
-        annotations = json.load(f)
-
     for index, bbox in enumerate(bounding_boxes):
         info = {}
-        for category in annotations["categories"]:
+        for category in get_annotations()["categories"]:
             if pred_classes[index] == category["id"]:
                 if not "arrow" in category["name"]:
                     info["category"] = category["name"]
                     info["directions"] = []
 
                     for new_index in range(0, len(bounding_boxes)):
-                        for category in annotations["categories"]:
+                        for category in get_annotations()["categories"]:
                             if pred_classes[new_index] == category["id"]:
                                 if "arrow" in category["name"]:
                                     if arrow_connections(info, category, new_index, bbox, bounding_boxes):
                                         break
 
                     break
+                else:
+                    info["category"] = category["name"]
 
         if "category" in info:
             info["x"] = bbox[0].item()
@@ -131,12 +144,10 @@ def json_writing(bounding_boxes, pred_classes, uuid):
         results["uuid"] = uuid
         results["timestamp"] = int(time.time())
 
-
     response = results.copy()
     json_object = json.dumps(results)
     collection.insert_one(results)
 
-    
     with open("./predictions/" + uuid + ".json", "w") as json_file:
         json_file.write(json_object)
 
@@ -148,10 +159,13 @@ def inference(im):
     metadata = dataset_registration()
 
     cfg = get_cfg()
-    cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
+    cfg.merge_from_file(model_zoo.get_config_file(
+        "COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = int(os.getenv("NUM_CLASSES"))
     cfg.MODEL.WEIGHTS = os.getenv("MODEL_WEIGHTS")
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = float(os.getenv("SCORE_THRESH_TEST"))   # set a custom testing threshold
+    cfg.MODEL.DEVICE = 'cpu'
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = float(
+        os.getenv("SCORE_THRESH_TEST"))   # set a custom testing threshold
     predictor = DefaultPredictor(cfg)
 
     outputs = predictor(im)
