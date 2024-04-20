@@ -228,7 +228,6 @@ COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml
 - Linux, macOS or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install);
 - [Python3](https://www.python.org/downloads/) >= 3.7;
 - [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx);
-- [CUDA](https://developer.nvidia.com/cuda-downloads);
 - Database in [MongoDB Atlas](https://www.mongodb.com/atlas).
 
 In order to execute the project follow the steps below:
@@ -255,6 +254,9 @@ In order to execute the project follow the steps below:
     git clone git@github.com:PROSLab/TBDM-VGLS-2023.git
     cd ./TBDM-VGLS-2023/ObjectDetection
     ```
+- download the model from [Hugging Face](https://huggingface.co/PROSLab/OD2ADOXX-Model/tree/main)
+  - insert it in the folder `obj_detection_model/` [link](https://github.com/PROSLab/TBDM-VGLS-2023/tree/main/ObjectDetection/fastapi_server/obj_detection_model)
+
 - create the virtual environment and execute it:
   ```
   python3 -m venv venv
@@ -319,4 +321,19 @@ In addition to the JSON response of the predicition you can also see the image w
 
 For example:
 
-![image predicted](https://i.postimg.cc/vTRrQ3QH/example.png)
+![image predicted](https://i.postimg.cc/FKtvj3V9/54123a6b-cb71-4a31-b084-91de1448b854.jpg)
+
+-----
+
+### LAN connection WSL2 and Windows
+If you want to use a LAN connection between Windows and WSL2 you have to configure the connection with WSL running this command using the PowerShell:
+```
+netsh interface portproxy add v4tov4 listenport=4000 listenaddress=0.0.0.0 connectport=8000 connectaddress=(wsl hostname -I)
+```
+
+Where:
+- `listenport` is the port to forward in Windows
+- `listenaddress` is the address in listening of the backend service with the model
+> [!NOTE]
+> you have to change the `host` in `ObjectDetection/fastapi_server/main.py` <br>
+> `uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)`
